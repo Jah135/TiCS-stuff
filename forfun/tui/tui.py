@@ -29,7 +29,7 @@ def render_inside_box(
     return "\n".join(lines)
 
 
-class Tree[T: AnsiStyle]:
+class Tree[T]:
     name: str
     items: list[T | Tree]
 

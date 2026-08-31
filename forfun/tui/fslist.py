@@ -26,7 +26,7 @@ def create_tree_from_directory(
     return Tree(basename(dir_path), items)
 
 
-dir_tree = create_tree_from_directory("../../../", {".git", "__pycache__"})
+dir_tree = create_tree_from_directory("../../", {".git", "__pycache__"})
 dir_tree.deep_sort()
 
 print(render_tree(dir_tree, file_style, dir_style, cset=THIN_MAPPING))
