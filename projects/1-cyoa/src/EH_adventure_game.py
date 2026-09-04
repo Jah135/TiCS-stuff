@@ -1,4 +1,4 @@
-from ANSI import tint, Palette, PaletteColor
+from ANSI import tint, Palette, PaletteColor, AnsiColor
 
 # this program encodes scenes as a not-so-binary tree or DAG (directed acyclic graph)
 # with branch-specific classes that store description text for each choice
@@ -8,10 +8,22 @@ from ANSI import tint, Palette, PaletteColor
 class SceneChoice:
     text: str
     resulting_scene: Scene
+    has_been_visited: bool
 
     def __init__(self, text: str, resulting_scene: Scene) -> None:
         self.text = text
         self.resulting_scene = resulting_scene
+        self.has_been_visited = False
+
+    def determine_choice_color(self) -> AnsiColor:
+        isnt_fully_explored = self.resulting_scene.has_unvisited_paths()
+
+        if self.has_been_visited and isnt_fully_explored:
+            return Palette(PaletteColor.Yellow)
+        elif self.has_been_visited and not isnt_fully_explored:
+            return Palette(PaletteColor.BrightGreen)
+
+        return Palette(PaletteColor.White)
 
 
 class Scene:
@@ -22,6 +34,13 @@ class Scene:
         self.text = text
         self.choices = choices
 
+    def has_unvisited_paths(self) -> bool:
+        for choice in self.choices:
+            if choice.resulting_scene.has_unvisited_paths():
+                return True
+
+        return not all(choice.has_been_visited for choice in self.choices)
+
 
 ROOT_SCENE = Scene(
     "you're taking an absolutely wonderful stroll through the forest when suddenly you're jumped by a gang of GOBLINS!!!!!!!! what do you do???",
@@ -29,7 +48,7 @@ ROOT_SCENE = Scene(
         SceneChoice(
             "scream and run around in circles",
             Scene(
-                "SCENE 1 TEXT",
+                "as you ",
                 [
                     SceneChoice("OPTION TEXT 1-1", Scene("SCENE 1-1 TEXT", [])),
                     SceneChoice("OPTION TEXT 1-2", Scene("SCENE 1-2 TEXT", [])),
@@ -52,7 +71,10 @@ def run_scene(scene: Scene):
 
     print("\nChoices:")
     for index, choice in enumerate(scene.choices):
-        print(tint(str(index + 1) + ". ", Palette(PaletteColor.Yellow)) + choice.text)
+        print(
+            tint(str(index + 1) + ". ", Palette(PaletteColor.Yellow))
+            + tint(choice.text, choice.determine_choice_color())
+        )
 
     while True:
         user_choice = input(
@@ -70,10 +92,12 @@ def run_scene(scene: Scene):
         except:
             print(
                 tint(
-                    "Invalid choice! Enter a valid choice index.",
+                    f"Invalid choice! Enter a valid choice index. ({', '.join(str(n) for n in range(1, num_scene_choices + 1))})",
                     Palette(PaletteColor.BrightRed),
                 )
             )
+
+    chosen_choice.has_been_visited = True
 
     run_scene(chosen_choice.resulting_scene)  # recursion maxxing
 
