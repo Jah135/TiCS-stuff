@@ -42,6 +42,8 @@ class Scene:
         return not all(choice.has_been_visited for choice in self.choices)
 
 
+# TODO: make the story
+
 ROOT_SCENE = Scene(
     "you're taking an absolutely wonderful stroll through the forest when suddenly you're jumped by a gang of GOBLINS!!!!!!!! what do you do???",
     [
@@ -55,7 +57,8 @@ ROOT_SCENE = Scene(
                 ],
             ),
         ),
-        SceneChoice("OPTION TEXT 2", Scene("SCENE 2 TEXT", [])),
+        SceneChoice("fight the goblins", Scene("SCENE 2 TEXT", [])),
+        SceneChoice("attempt to bribe the goblins with the money you have on you (which is not much, brokie)", Scene("asdasd", []))
     ],
 )
 
