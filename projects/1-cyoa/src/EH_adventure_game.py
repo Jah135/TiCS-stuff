@@ -24,7 +24,7 @@ class Scene:
 
 
 ROOT_SCENE = Scene(
-    "you're taking an absolutely wonderful stroll through the forest when suddenly you're jumped by a gang of GOBLINS!!!!!!!! what do you do?",
+    "you're taking an absolutely wonderful stroll through the forest when suddenly you're jumped by a gang of GOBLINS!!!!!!!! what do you do???",
     [
         SceneChoice(
             "scream and run around in circles",
@@ -78,4 +78,17 @@ def run_scene(scene: Scene):
     run_scene(chosen_choice.resulting_scene)  # recursion maxxing
 
 
-run_scene(ROOT_SCENE)
+while True:
+    run_scene(ROOT_SCENE)
+
+    while True:
+        choice = (
+            input(tint("Try again? (Y/n): ", Palette(PaletteColor.BrightCyan)))
+            .strip()
+            .lower()
+        )
+
+        if choice == "n":
+            exit()
+        elif choice == "y":
+            break
