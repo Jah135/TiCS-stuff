@@ -9,4 +9,4 @@ for file in ["shrek.txt", "seals.txt", "bees.txt"]:
 analysis = analyze_text(data, 1)
 generator = TextGenerator(analysis.lingo)
 
-print(generator.generate_text("What", 500))
+print(generator.generate_text("Thinking", 500))
