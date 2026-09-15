@@ -4,7 +4,7 @@ from os.path import isdir, basename
 from pyansi import AnsiStyle, PaletteColor, Palette
 
 from tui import Tree, render_tree
-from charactersets import THIN_ROUNDED_MAPPING, THICK_MAPPING, THIN_MAPPING
+from character_set import THIN_ROUNDED_MAPPING, THICK_MAPPING, THIN_MAPPING
 
 file_style = AnsiStyle(fg=Palette(PaletteColor.BrightGreen))
 dir_style = AnsiStyle(fg=Palette(PaletteColor.BrightBlue)).italic()

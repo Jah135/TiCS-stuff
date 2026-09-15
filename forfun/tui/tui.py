@@ -1,6 +1,10 @@
+from typing import Any
+
 from pyansi import AnsiStyle
 
-from charactersets import CharacterSet, THIN_MAPPING
+from character_set import CharacterSet, THIN_MAPPING
+from tree import Tree
+from table import Table
 
 
 def render_inside_box(
@@ -27,29 +31,6 @@ def render_inside_box(
     lines.append(mapping.bl + mapping.h * (width - 2) + mapping.br)
 
     return "\n".join(lines)
-
-
-class Tree[T]:
-    name: str
-    items: list[T | Tree]
-
-    def __repr__(self) -> str:
-        return f"Tree({self.name}, {self.items})"
-
-    def __init__(self, name: str, items: list[T | Tree]) -> None:
-        self.name = name
-        self.items = items
-
-    def shallow_sort(self):
-        self.items.sort(key=lambda x: str(x))
-        self.items.sort(key=lambda x: isinstance(x, Tree), reverse=False)
-
-    def deep_sort(self):
-        self.shallow_sort()
-
-        for value in self.items:
-            if isinstance(value, Tree):
-                value.deep_sort()
 
 
 def render_tree(
@@ -82,5 +63,69 @@ def render_tree(
                 + " "
                 + item_style.apply_with_reset(str(value))
             )
+
+    return "\n".join(lines)
+
+
+def _get_char_length(x: Any) -> int:
+    return len(str(x))
+
+
+def _get_column_width(table: Table, column_index: int) -> int:
+    return max(
+        _get_char_length(x)
+        for x in (
+            table.column_headers[column_index],
+            *table.read_column(column_index),
+        )
+    )
+
+
+def render_table(table: Table, cset: CharacterSet = THIN_MAPPING) -> str:
+    lines = []
+
+    row_header_width = max(_get_char_length(header) for header in table.row_headers)
+    column_widths = [_get_column_width(table, idx) for idx in range(table.column_count)]
+
+    lines.append(
+        cset.tl
+        + cset.fd.join(cset.h * width for width in (row_header_width, *column_widths))
+        + cset.tr
+    )
+    lines.append(
+        cset.v
+        + " " * row_header_width
+        + cset.v
+        + cset.v.join(
+            header.center(column_widths[col_index])
+            for (col_index, header) in enumerate(table.column_headers)
+        )
+        + cset.v
+    )
+    lines.append(
+        cset.fr
+        + cset.cross.join(
+            cset.h * width for width in (row_header_width, *column_widths)
+        )
+        + cset.fl
+    )
+
+    for row_idx, row_data in enumerate(table._data):
+        lines.append(
+            cset.v
+            + table.row_headers[row_idx].center(row_header_width)
+            + cset.v
+            + cset.v.join(
+                str(x).center(column_widths[col_index])
+                for (col_index, x) in enumerate(row_data)
+            )
+            + cset.v
+        )
+
+    lines.append(
+        cset.bl
+        + cset.fu.join(cset.h * width for width in (row_header_width, *column_widths))
+        + cset.br
+    )
 
     return "\n".join(lines)

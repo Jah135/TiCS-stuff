@@ -9,6 +9,7 @@ class CharacterSet:
     fl: str
     fd: str
     fu: str
+    cross: str
 
     def __init__(
         self,
@@ -22,6 +23,7 @@ class CharacterSet:
         fl: str,
         fd: str,
         fu: str,
+        cross: str,
     ) -> None:
         self.h = h
         self.v = v
@@ -33,6 +35,7 @@ class CharacterSet:
         self.fl = fl
         self.fd = fd
         self.fu = fu
+        self.cross = cross
 
 
 THIN_H = "\u2500"
@@ -51,6 +54,7 @@ THIN_FR = "\u251c"
 THIN_FL = "\u2524"
 THIN_FD = "\u252c"
 THIN_FU = "\u2534"
+THIN_CROSS = "\u253c"
 
 THICK_H = "\u2501"
 THICK_V = "\u2503"
@@ -62,6 +66,7 @@ THICK_FR = "\u2523"
 THICK_FL = "\u252b"
 THICK_FD = "\u2533"
 THICK_FU = "\u253b"
+THICK_CROSS = "\u254b"
 
 THIN_MAPPING = CharacterSet(
     h=THIN_H,
@@ -74,6 +79,7 @@ THIN_MAPPING = CharacterSet(
     fl=THIN_FL,
     fd=THIN_FD,
     fu=THIN_FU,
+    cross=THIN_CROSS,
 )
 THIN_ROUNDED_MAPPING = CharacterSet(
     h=THIN_H,
@@ -86,6 +92,7 @@ THIN_ROUNDED_MAPPING = CharacterSet(
     fl=THIN_FL,
     fd=THIN_FD,
     fu=THIN_FU,
+    cross=THIN_CROSS,
 )
 THIN_DASHED_MAPPING = CharacterSet(
     h=THIN_H_DASHED,
@@ -98,6 +105,7 @@ THIN_DASHED_MAPPING = CharacterSet(
     fl=THIN_FL,
     fd=THIN_FD,
     fu=THIN_FU,
+    cross=THIN_CROSS,
 )
 THICK_MAPPING = CharacterSet(
     h=THICK_H,
@@ -110,4 +118,5 @@ THICK_MAPPING = CharacterSet(
     fl=THICK_FL,
     fd=THICK_FD,
     fu=THICK_FU,
+    cross=THICK_CROSS,
 )
