@@ -44,8 +44,11 @@ class Version:
 
         return False
 
+    def __le__(self, other: Version) -> bool:
+        return self < other or self == other
+
 
 older_version = Version(0, 0, 10)
-newer_version = Version(0, 1, 0)
+newer_version = Version.from_string("1.1.1")
 
 print(older_version < newer_version)
