@@ -14,4 +14,4 @@ test_table.write_column(0, (1, '"this is not an integer"', 9, 1e20))
 test_table.write_row(1, (10, 20, "lee"))
 
 print(test_table._data)
-print(render_table(test_table, max_column_width=10))
+print(render_table(test_table, max_column_width=90, column_padding=20))
