@@ -87,11 +87,11 @@ def _format_cell_content(x: Any, fit_width: int) -> str:
 
     if x_str_len > fit_width:
         if fit_width > 3:
-            return (x_str[: fit_width - 3] + "...").center(fit_width)
+            return (x_str[: fit_width - 3] + "...").rjust(fit_width)
         else:
-            return x_str[:fit_width].center(fit_width)
+            return x_str[:fit_width].rjust(fit_width)
 
-    return x_str.center(fit_width)
+    return x_str.rjust(fit_width)
 
 
 def render_table(
@@ -143,7 +143,6 @@ def render_table(
             + _format_cell_content(row_header, row_header_width)
             + cset.v
             + cset.v.join(
-                # str(x)[:max_column_width].center(column_widths[col_index])
                 _format_cell_content(x, column_widths[col_index])
                 for (col_index, x) in enumerate(row_data)
             )

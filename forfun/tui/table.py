@@ -16,12 +16,16 @@ class Table[T]:
         return len(self.column_headers)
 
     def __init__(
-        self, row_headers: list[str], column_headers: list[str], default: T = 0
+        self,
+        data: list[list[T]],
+        row_headers: list[str],
+        column_headers: list[str],
     ) -> None:
         self.row_headers = row_headers
         self.column_headers = column_headers
 
-        self._data = [[default] * self.column_count for _ in range(self.row_count)]
+        # self._data = [[None] * self.column_count for _ in range(self.row_count)]
+        self._data = data
 
     def read_row(self, row_index: int) -> list:
         return self._data[row_index].copy()
