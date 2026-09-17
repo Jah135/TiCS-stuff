@@ -81,11 +81,38 @@ def _get_column_width(table: Table, column_index: int) -> int:
     )
 
 
-def render_table(table: Table, cset: CharacterSet = THIN_MAPPING) -> str:
+def _format_cell_content(x: Any, fit_width: int) -> str:
+    x_str = str(x)
+    x_str_len = len(x_str)
+
+    if x_str_len > fit_width:
+        if fit_width > 3:
+            return (x_str[: fit_width - 3] + "...").center(fit_width)
+        else:
+            return x_str[:fit_width].center(fit_width)
+
+    return x_str.center(fit_width)
+
+
+def render_table(
+    table: Table,
+    cset: CharacterSet = THIN_MAPPING,
+    max_column_width: int = 100,
+    column_padding: int = 1,
+) -> str:
     lines = []
 
-    row_header_width = max(_get_char_length(header) for header in table.row_headers)
-    column_widths = [_get_column_width(table, idx) for idx in range(table.column_count)]
+    row_header_width: int = (
+        min(
+            max_column_width,
+            max(_get_char_length(header) for header in table.row_headers),
+        )
+        + column_padding * 2
+    )
+    column_widths: tuple[int, ...] = tuple(
+        min(max_column_width, _get_column_width(table, idx)) + (column_padding * 2)
+        for idx in range(table.column_count)
+    )
 
     lines.append(
         cset.tl
@@ -97,7 +124,7 @@ def render_table(table: Table, cset: CharacterSet = THIN_MAPPING) -> str:
         + " " * row_header_width
         + cset.v
         + cset.v.join(
-            header.center(column_widths[col_index])
+            _format_cell_content(header, column_widths[col_index])
             for (col_index, header) in enumerate(table.column_headers)
         )
         + cset.v
@@ -110,13 +137,14 @@ def render_table(table: Table, cset: CharacterSet = THIN_MAPPING) -> str:
         + cset.fl
     )
 
-    for row_idx, row_data in enumerate(table._data):
+    for row_header, row_data in zip(table.row_headers, table._data):
         lines.append(
             cset.v
-            + table.row_headers[row_idx].center(row_header_width)
+            + _format_cell_content(row_header, row_header_width)
             + cset.v
             + cset.v.join(
-                str(x).center(column_widths[col_index])
+                # str(x)[:max_column_width].center(column_widths[col_index])
+                _format_cell_content(x, column_widths[col_index])
                 for (col_index, x) in enumerate(row_data)
             )
             + cset.v
