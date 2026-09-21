@@ -2,7 +2,7 @@ from typing import Any
 
 from pyansi import AnsiStyle
 
-from character_set import CharacterSet, THIN_MAPPING
+from character_set import CharacterSet, SET_THIN
 from tree import Tree
 from table import Table
 
@@ -11,7 +11,7 @@ def render_inside_box(
     contents_text: str,
     width: int = 10,
     height: int = 4,
-    mapping: CharacterSet = THIN_MAPPING,
+    mapping: CharacterSet = SET_THIN,
 ) -> str:
     contents_lines = contents_text.splitlines()
     lines = []
@@ -37,7 +37,7 @@ def render_tree(
     tree: Tree,
     item_style: AnsiStyle = AnsiStyle(),
     dir_style: AnsiStyle = AnsiStyle(),
-    cset: CharacterSet = THIN_MAPPING,
+    cset: CharacterSet = SET_THIN,
 ) -> str:
     lines = []
 
@@ -81,50 +81,56 @@ def _get_column_width(table: Table, column_index: int) -> int:
     )
 
 
-def _format_cell_content(x: Any, fit_width: int) -> str:
+def _format_cell_content(x: Any, fit_width: int, padding_width: int = 0) -> str:
     x_str = str(x)
     x_str_len = len(x_str)
 
+    final = x_str
+
     if x_str_len > fit_width:
         if fit_width > 3:
-            return (x_str[: fit_width - 3] + "...").rjust(fit_width)
+            final = x_str[: fit_width - 3] + "..."
         else:
-            return x_str[:fit_width].rjust(fit_width)
+            final = x_str[:fit_width]
 
-    return x_str.rjust(fit_width)
+    return final.rjust(fit_width + padding_width)
 
 
 def render_table(
     table: Table,
-    cset: CharacterSet = THIN_MAPPING,
+    cset: CharacterSet = SET_THIN,
+    min_column_width: int = 0,
     max_column_width: int = 100,
     column_padding: int = 1,
 ) -> str:
     lines = []
 
-    row_header_width: int = (
+    row_header_width: int = max(
         min(
             max_column_width,
             max(_get_char_length(header) for header in table.row_headers),
-        )
-        + column_padding * 2
+        ),
+        min_column_width,
     )
     column_widths: tuple[int, ...] = tuple(
-        min(max_column_width, _get_column_width(table, idx)) + (column_padding * 2)
+        max(min(max_column_width, _get_column_width(table, idx)), min_column_width)
         for idx in range(table.column_count)
     )
 
     lines.append(
         cset.tl
-        + cset.fd.join(cset.h * width for width in (row_header_width, *column_widths))
+        + cset.fd.join(
+            cset.h * (width + column_padding)
+            for width in (row_header_width, *column_widths)
+        )
         + cset.tr
     )
     lines.append(
         cset.v
-        + " " * row_header_width
+        + " " * (row_header_width + column_padding)
         + cset.v
         + cset.v.join(
-            _format_cell_content(header, column_widths[col_index])
+            _format_cell_content(header, column_widths[col_index], column_padding)
             for (col_index, header) in enumerate(table.column_headers)
         )
         + cset.v
@@ -132,7 +138,8 @@ def render_table(
     lines.append(
         cset.fr
         + cset.cross.join(
-            cset.h * width for width in (row_header_width, *column_widths)
+            cset.h * (width + column_padding)
+            for width in (row_header_width, *column_widths)
         )
         + cset.fl
     )
@@ -140,10 +147,10 @@ def render_table(
     for row_header, row_data in zip(table.row_headers, table._data):
         lines.append(
             cset.v
-            + _format_cell_content(row_header, row_header_width)
+            + _format_cell_content(row_header, row_header_width, column_padding)
             + cset.v
             + cset.v.join(
-                _format_cell_content(x, column_widths[col_index])
+                _format_cell_content(x, column_widths[col_index], column_padding)
                 for (col_index, x) in enumerate(row_data)
             )
             + cset.v
@@ -151,7 +158,10 @@ def render_table(
 
     lines.append(
         cset.bl
-        + cset.fu.join(cset.h * width for width in (row_header_width, *column_widths))
+        + cset.fu.join(
+            cset.h * (width + column_padding)
+            for width in (row_header_width, *column_widths)
+        )
         + cset.br
     )
 

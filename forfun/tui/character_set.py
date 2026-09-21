@@ -13,17 +13,17 @@ class CharacterSet:
 
     def __init__(
         self,
-        h: str,
-        v: str,
-        tl: str,
-        tr: str,
-        bl: str,
-        br: str,
-        fr: str,
-        fl: str,
-        fd: str,
-        fu: str,
-        cross: str,
+        h: str = "",
+        v: str = "",
+        tl: str = "",
+        tr: str = "",
+        bl: str = "",
+        br: str = "",
+        fr: str = "",
+        fl: str = "",
+        fd: str = "",
+        fu: str = "",
+        cross: str = "",
     ) -> None:
         self.h = h
         self.v = v
@@ -68,7 +68,7 @@ THICK_FD = "\u2533"
 THICK_FU = "\u253b"
 THICK_CROSS = "\u254b"
 
-THIN_MAPPING = CharacterSet(
+SET_THIN = CharacterSet(
     h=THIN_H,
     v=THIN_V,
     tl=THIN_TL,
@@ -81,7 +81,7 @@ THIN_MAPPING = CharacterSet(
     fu=THIN_FU,
     cross=THIN_CROSS,
 )
-THIN_ROUNDED_MAPPING = CharacterSet(
+SET_THIN_ROUNDED = CharacterSet(
     h=THIN_H,
     v=THIN_V,
     tl=THIN_TL_ROUNDED,
@@ -94,7 +94,7 @@ THIN_ROUNDED_MAPPING = CharacterSet(
     fu=THIN_FU,
     cross=THIN_CROSS,
 )
-THIN_DASHED_MAPPING = CharacterSet(
+SET_THIN_DASHED = CharacterSet(
     h=THIN_H_DASHED,
     v=THIN_V_DASHED,
     tl=THIN_TL,
@@ -107,7 +107,7 @@ THIN_DASHED_MAPPING = CharacterSet(
     fu=THIN_FU,
     cross=THIN_CROSS,
 )
-THICK_MAPPING = CharacterSet(
+SET_THICK = CharacterSet(
     h=THICK_H,
     v=THICK_V,
     tl=THICK_TL,
@@ -120,3 +120,5 @@ THICK_MAPPING = CharacterSet(
     fu=THICK_FU,
     cross=THICK_CROSS,
 )
+
+SET_EMPTY = CharacterSet(*(("",) * 11))

@@ -4,7 +4,7 @@ from os.path import isdir, basename
 from pyansi import AnsiStyle, PaletteColor, Palette
 
 from tui import Tree, render_tree
-from character_set import THIN_ROUNDED_MAPPING, THICK_MAPPING, THIN_MAPPING
+from character_set import SET_THIN_ROUNDED, SET_THICK, SET_THIN
 
 file_style = AnsiStyle(fg=Palette(PaletteColor.BrightGreen))
 dir_style = AnsiStyle(fg=Palette(PaletteColor.BrightBlue)).italic()
@@ -29,4 +29,4 @@ def create_tree_from_directory(
 dir_tree = create_tree_from_directory("../../", {".git", "__pycache__"})
 dir_tree.deep_sort()
 
-print(render_tree(dir_tree, file_style, dir_style, cset=THIN_MAPPING))
+print(render_tree(dir_tree, file_style, dir_style, cset=SET_THIN))
